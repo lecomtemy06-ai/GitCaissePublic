@@ -1,0 +1,352 @@
+{
+  "categories": {
+    "Plats": {
+      "types": {
+        "Spécial": {
+          "prix": 4.5,
+          "tva": 6
+        },
+        "Durum": {
+          "prix": 4,
+          "tva": 6
+        },
+        "Assiette": {
+          "prix": 10,
+          "tva": 6
+        },
+        "Kapsalon": {
+          "prix": 5,
+          "tva": 6
+        },
+        "Pains ronds": {
+          "prix": 1.5,
+          "tva": 6
+        },
+        "Viande": {
+          "prix": 0,
+          "tva": 6
+        }
+      },
+      "viandes": {
+        "Fricandelle": {
+          "prix": 2.5,
+          "tva": 6
+        },
+        "Hamburger": {
+          "prix": 2.5,
+          "tva": 6
+        },
+        "Poulycroc": {
+          "prix": 3,
+          "tva": 6
+        },
+        "Boulettes": {
+          "prix": 3.5,
+          "tva": 6
+        },
+        "Belcanto": {
+          "prix": 3.5,
+          "tva": 6
+        },
+        "Cervelas": {
+          "prix": 3.5,
+          "tva": 6
+        },
+        "Mulky": {
+          "prix": 3.5,
+          "tva": 6
+        },
+        "Brochettes de dinde": {
+          "prix": 4,
+          "tva": 6
+        },
+        "Poulet mariné": {
+          "prix": 0.69,
+          "tva": 6
+        },
+        "Bœuf mariné": {
+          "prix": 0.69,
+          "tva": 6
+        },
+        "Pitta": {
+          "prix": 6,
+          "tva": 6
+        }
+      }
+    },
+    "Frites": {
+      "Petite": {
+        "prix": 3,
+        "tva": 6
+      },
+      "Moyenne": {
+        "prix": 4,
+        "tva": 6
+      },
+      "Grande": {
+        "prix": 5,
+        "tva": 6
+      },
+      "Sauce": {
+        "prix": 0.5,
+        "tva": 6
+      }
+    },
+    "Desserts": {
+      "Chips Petit": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kinder bueno": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kinder country": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kinder Maxi": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Milka Leo": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Milka Tablette": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Mars": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Twix": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Snikers": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Mélange bonbon": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Pistache": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Cacahuete": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Noix": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Noix Cajoux": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Chewing gum": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Casis": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Chacha": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Balisto": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Bounty": {
+        "prix": 2,
+        "tva": 6
+      }
+    },
+    "Boissons": {
+      "Eau plate": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Eau pétillante": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Lipton Peach": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Lipton Original": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Coca-Cola": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Coca-Cola Zéro": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Fanta Orange": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Fanta Exotic": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Oasis": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Uludag Gazoz": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Tropico": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Fanta 1,5L": {
+        "prix": 5,
+        "tva": 6
+      },
+      "Sprite 1,5L": {
+        "prix": 5,
+        "tva": 6
+      },
+      "Coca-Cola 1,5L": {
+        "prix": 6,
+        "tva": 6
+      },
+      "Lipton Green": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Jupilere": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Jupilere 0%": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Hogarden rosée": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Hogarden": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Leffe Blonde": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Leffe Brune": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Red Bull": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Vin Rouge": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Vin Rosé": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Vin Blanc": {
+        "prix": 2,
+        "tva": 21
+      },
+      "William Coca": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Bacardi Coca": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Eristof Flash": {
+        "prix": 2,
+        "tva": 21
+      },
+      "JB Coca": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Caprisun": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Monster Energie": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Coca vanille": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Fanta Citron": {
+        "prix": 2,
+        "tva": 6
+      }
+    },
+    "Divers": {
+      "Bucket": {
+        "prix": 12,
+        "tva": 6
+      },
+      "BucketGd": {
+        "prix": 18,
+        "tva": 6
+      },
+      "Sauce+": {
+        "prix": 0.8,
+        "tva": 6
+      }
+    }
+  },
+  "supplements": {
+    "Salade": {
+      "prix": 0,
+      "tva": 6
+    },
+    "Tomates": {
+      "prix": 0,
+      "tva": 6
+    },
+    "Oignons": {
+      "prix": 0,
+      "tva": 6
+    },
+    "Fromagère": {
+      "prix": 1.5,
+      "tva": 6
+    },
+    "Crudités+": {
+      "prix": 0.8,
+      "tva": 6
+    },
+    "Frites+": {
+      "prix": 0.8,
+      "tva": 6
+    },
+    "Sauce+": {
+      "prix": 0.8,
+      "tva": 6
+    }
+  }
+}

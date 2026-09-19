@@ -19,7 +19,7 @@
  * clôtures, elles, sont fusionnées par numéro de ticket / par date.
  */
 import { Stockage } from './stockage.js';
-import { TAILLE_BLOC_TICKETS } from './config.js';
+import { TAILLE_BLOC_TICKETS, DEPOT_PRIVE } from './config.js';
 import { appliquerPatchCatalogue, decrirePatch } from './catalogue-patch.js';
 
 const API_BASE = 'https://api.github.com';
@@ -34,7 +34,7 @@ export function onStatutChange(fn) {
 }
 
 function notifierStatut() {
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   const file = Stockage.chargerFileSync();
   const statut = {
     configure: estConfigure(config),
@@ -49,12 +49,16 @@ function estConfigure(config) {
 }
 
 // ===== Configuration =====
+// Le propriétaire et le nom du dépôt sont fixés dans config.js (non
+// sensibles). Seul le jeton est propre à cet appareil.
 export function getConfigGithub() {
-  return Stockage.chargerConfigGithub();
+  const token = Stockage.chargerTokenGithub();
+  if (!token) return null;
+  return { owner: DEPOT_PRIVE.owner, repo: DEPOT_PRIVE.repo, token };
 }
 
-export function sauvegarderConfigGithub(config) {
-  Stockage.sauvegarderConfigGithub(config);
+export function sauvegarderTokenGithub(token) {
+  Stockage.sauvegarderTokenGithub(token);
   notifierStatut();
   traiterFile();
 }
@@ -82,7 +86,7 @@ export function fileAttendreSynchro(item) {
 
 export async function traiterFile() {
   if (enTraitement) return;
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   if (!estConfigure(config)) return;
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
 
@@ -195,7 +199,7 @@ async function synchroniserCatalogue(config, item) {
 // après échec de toutes les tentatives (l'appelant doit alors se
 // rabattre sur une numérotation de secours, voir numerotation.js).
 export async function reserverBlocTickets() {
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   if (!estConfigure(config)) return null;
   const chemin = 'compteur.json';
   for (let essai = 0; essai < MAX_ESSAIS_CONFLIT; essai++) {
@@ -224,7 +228,7 @@ export async function reserverBlocTickets() {
 }
 
 export async function obtenirCatalogueDistant() {
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   if (!estConfigure(config)) return null;
   try {
     const distant = await githubGetFile(config, 'catalogue.json');
@@ -237,7 +241,7 @@ export async function obtenirCatalogueDistant() {
 }
 
 export async function obtenirVentesDistantes(date) {
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   if (!estConfigure(config)) return null;
   try {
     const distant = await githubGetFile(config, `ventes/${date}.json`);
@@ -250,7 +254,7 @@ export async function obtenirVentesDistantes(date) {
 }
 
 export async function obtenirClotureDistante(date) {
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   if (!estConfigure(config)) return null;
   try {
     const distant = await githubGetFile(config, `clotures/${date}.json`);
@@ -267,7 +271,7 @@ export async function obtenirClotureDistante(date) {
 // Renvoie null si non configuré/hors-ligne (pour distinguer d'une
 // liste simplement vide).
 export async function listerFichiersDistants(dossier) {
-  const config = Stockage.chargerConfigGithub();
+  const config = getConfigGithub();
   if (!estConfigure(config)) return null;
   try {
     const url = `${API_BASE}/repos/${config.owner}/${config.repo}/contents/${dossier}`;

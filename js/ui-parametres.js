@@ -1,13 +1,19 @@
 /**
  * ui-parametres.js — Écran de configuration : identifiant de cette
- * caisse (préfixe des numéros de ticket) et synchronisation GitHub
- * (dépôt privé + jeton d'accès), avec pastille d'indication du statut
- * de synchronisation. Le jeton reste stocké uniquement sur cet appareil
- * (localStorage), jamais transmis ailleurs qu'à l'API GitHub.
+ * caisse (traçabilité + numérotation de secours) et jeton d'accès
+ * GitHub, avec pastille d'indication du statut de synchronisation.
+ *
+ * Le propriétaire et le nom du dépôt privé sont fixés dans config.js
+ * (DEPOT_PRIVE) — non sensibles, identiques pour tous les appareils.
+ * SEUL le jeton reste propre à cet appareil (localStorage), jamais
+ * transmis ailleurs qu'à l'API GitHub : après un vidage du cache du
+ * navigateur, c'est la seule chose à ressaisir pour reconnecter cet
+ * appareil.
  */
+import { DEPOT_PRIVE } from './config.js';
 import { Stockage } from './stockage.js';
 import { modal, fermerModal, escapeHtml } from './ui-modal.js';
-import { getConfigGithub, sauvegarderConfigGithub, onStatutChange, testerConnexionGithub } from './github-sync.js';
+import { getConfigGithub, sauvegarderTokenGithub, onStatutChange, testerConnexionGithub } from './github-sync.js';
 
 export function initUiParametres() {
   onStatutChange(mettreAJourPastille);
@@ -23,7 +29,12 @@ function mettreAJourPastille({ configure, enAttente }) {
     pastille.style.cssText = 'position:fixed;top:6px;right:6px;font-size:10px;padding:3px 7px;border-radius:10px;z-index:150;color:white;pointer-events:none;';
     document.body.appendChild(pastille);
   }
-  if (!configure) { pastille.style.display = 'none'; return; }
+  if (!configure) {
+    pastille.style.background = '#B71C1C';
+    pastille.style.display = 'block';
+    pastille.textContent = '⚠️ GitHub non configuré';
+    return;
+  }
   pastille.style.display = 'block';
   if (enAttente > 0) {
     pastille.style.background = '#E65100';
@@ -39,7 +50,7 @@ function nettoyerIdentifiant(brut) {
 }
 
 export function ouvrirParametres(onRetour) {
-  const config = getConfigGithub() || { owner: '', repo: '', token: '' };
+  const config = getConfigGithub();
   const retour = onRetour || fermerModal;
   const identifiantActuel = Stockage.obtenirOuGenererIdentifiantCaisse();
 
@@ -48,27 +59,23 @@ export function ouvrirParametres(onRetour) {
 
     <div class="section-titre" style="margin-top:0">Identifiant de cette caisse</div>
     <p class="confirm-txt" style="font-size:12px">
-      Inclus dans chaque numéro de ticket (ex. "${escapeHtml(identifiantActuel)}-000001") pour que
-      deux appareils ne puissent JAMAIS produire le même numéro. Un identifiant a été généré
-      automatiquement ; tu peux le remplacer par quelque chose de plus parlant (ex. "A", "COMPTOIR").
+      Sert de traçabilité ("quel appareil a fait cette vente") et de repli en cas de
+      panne réseau prolongée. Un identifiant a été généré automatiquement ; tu peux le
+      remplacer par quelque chose de plus parlant (ex. "A", "COMPTOIR").
       <strong>Doit être différent sur chaque appareil.</strong>
     </p>
     <input id="champ-identifiant" type="text" value="${escapeHtml(identifiantActuel)}" maxlength="10"
       style="width:100%;padding:10px;background:#333;color:white;border:none;border-radius:6px;font-size:15px;margin-bottom:14px;text-transform:uppercase">
 
-    <div class="section-titre">Synchronisation GitHub</div>
-    <p class="confirm-txt" style="font-size:12px">Jeton "fine-grained" limité en lecture/écriture à ce seul dépôt privé. Il reste stocké uniquement sur cet appareil.</p>
-    <div style="margin-bottom:8px">
-      <label style="color:#aaa;font-size:13px">Propriétaire (compte GitHub)</label>
-      <input id="champ-owner" type="text" value="${escapeHtml(config.owner)}" style="width:100%;padding:10px;background:#333;color:white;border:none;border-radius:6px;font-size:15px;margin-top:4px">
-    </div>
-    <div style="margin-bottom:8px">
-      <label style="color:#aaa;font-size:13px">Nom du dépôt privé</label>
-      <input id="champ-repo" type="text" value="${escapeHtml(config.repo)}" style="width:100%;padding:10px;background:#333;color:white;border:none;border-radius:6px;font-size:15px;margin-top:4px">
-    </div>
+    <div class="section-titre">Connexion au dépôt privé</div>
+    <p class="confirm-txt" style="font-size:12px">
+      Dépôt : <strong>${escapeHtml(DEPOT_PRIVE.owner)}/${escapeHtml(DEPOT_PRIVE.repo)}</strong> (fixé pour tous les appareils).
+      Seul le jeton ci-dessous est propre à CET appareil — c'est la seule chose à
+      ressaisir si tu vides un jour le cache du navigateur.
+    </p>
     <div style="margin-bottom:8px">
       <label style="color:#aaa;font-size:13px">Jeton d'accès</label>
-      <input id="champ-token" type="password" placeholder="${config.token ? '••••••••••• (déjà configuré)' : 'ghp_...'}" style="width:100%;padding:10px;background:#333;color:white;border:none;border-radius:6px;font-size:15px;margin-top:4px">
+      <input id="champ-token" type="password" placeholder="${config && config.token ? '••••••••••• (déjà configuré)' : 'ghp_...'}" style="width:100%;padding:10px;background:#333;color:white;border:none;border-radius:6px;font-size:15px;margin-top:4px">
     </div>
     <div id="resultat-test" class="confirm-txt" style="font-size:13px;min-height:18px"></div>
     <div class="modal-actions">
@@ -80,8 +87,9 @@ export function ouvrirParametres(onRetour) {
   conteneur.querySelector('#btn-fermer-param').addEventListener('click', retour);
 
   conteneur.querySelector('#btn-tester').addEventListener('click', async () => {
-    const c = lireChampsGithub(conteneur, config);
+    const c = lireConfigTest(conteneur, config);
     const zone = conteneur.querySelector('#resultat-test');
+    if (!c) { zone.innerHTML = '<span style="color:red">❌ Entre un jeton d\'abord</span>'; return; }
     zone.textContent = 'Test en cours...';
     const resultat = await testerConnexionGithub(c);
     zone.innerHTML = resultat.ok
@@ -93,17 +101,18 @@ export function ouvrirParametres(onRetour) {
     const identifiant = nettoyerIdentifiant(conteneur.querySelector('#champ-identifiant').value) || identifiantActuel;
     Stockage.definirIdentifiantCaisse(identifiant);
 
-    const c = lireChampsGithub(conteneur, config);
-    sauvegarderConfigGithub(c);
+    const nouveauToken = conteneur.querySelector('#champ-token').value.trim();
+    if (nouveauToken) sauvegarderTokenGithub(nouveauToken);
+
     retour();
   });
 
   modal(conteneur);
 }
 
-function lireChampsGithub(conteneur, config) {
-  const owner = conteneur.querySelector('#champ-owner').value.trim();
-  const repo = conteneur.querySelector('#champ-repo').value.trim();
+function lireConfigTest(conteneur, config) {
   const nouveauToken = conteneur.querySelector('#champ-token').value.trim();
-  return { owner, repo, token: nouveauToken || config.token };
+  const token = nouveauToken || (config && config.token);
+  if (!token) return null;
+  return { owner: DEPOT_PRIVE.owner, repo: DEPOT_PRIVE.repo, token };
 }

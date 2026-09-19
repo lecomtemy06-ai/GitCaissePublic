@@ -24,7 +24,8 @@ export const CLES_STOCKAGE = {
   COMPTEUR_SECOURS: "compteur_secours_v22",
   CLOTURES: "clotures_v22",
   FILE_SYNC: "file_sync_v22",
-  GITHUB_CONFIG: "github_config_v22",
+  GITHUB_CONFIG: "github_config_v22", // ancien format (migration automatique, voir stockage.js)
+  TOKEN_GITHUB: "token_github_v22",
   IDENTIFIANT_CAISSE: "identifiant_caisse_v22"
 };
 
@@ -43,3 +44,14 @@ export const TAUX_TVA_DISPONIBLES = [6, 12, 21];
 
 // Emplacement du catalogue par défaut (servi comme fichier statique)
 export const CHEMIN_CATALOGUE_JSON = "./data/catalogue.json";
+
+// Dépôt privé utilisé pour la synchronisation (voir github-sync.js).
+// Le propriétaire et le nom du dépôt ne sont PAS sensibles (ils ne
+// donnent aucun accès sans le jeton) : ils sont donc fixés ici une
+// fois pour toutes, plutôt que redemandés sur chaque appareil. Seul le
+// jeton d'accès reste propre à chaque appareil (voir Paramètres dans
+// l'app), pour des raisons de sécurité.
+export const DEPOT_PRIVE = {
+  owner: "lecomtemy06-ai",
+  repo: "GitCaissePrive"
+};

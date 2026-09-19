@@ -68,8 +68,23 @@ export const Stockage = {
   chargerFileSync: () => lire(CLES_STOCKAGE.FILE_SYNC, []),
   sauvegarderFileSync: (f) => ecrire(CLES_STOCKAGE.FILE_SYNC, f),
 
-  chargerConfigGithub: () => lire(CLES_STOCKAGE.GITHUB_CONFIG, null),
-  sauvegarderConfigGithub: (c) => ecrire(CLES_STOCKAGE.GITHUB_CONFIG, c),
+  // Jeton d'accès GitHub de CET appareil (propriétaire et nom du dépôt
+  // sont fixés dans config.js — voir DEPOT_PRIVE — car non sensibles).
+  // Migre automatiquement l'ancien format (propriétaire+dépôt+jeton
+  // stockés ensemble) si trouvé, pour ne rien casser après une mise à
+  // jour de l'app.
+  chargerTokenGithub: () => {
+    const token = localStorage.getItem(CLES_STOCKAGE.TOKEN_GITHUB);
+    if (token) return token;
+    const ancien = lire(CLES_STOCKAGE.GITHUB_CONFIG, null);
+    if (ancien && ancien.token) {
+      localStorage.setItem(CLES_STOCKAGE.TOKEN_GITHUB, ancien.token);
+      localStorage.removeItem(CLES_STOCKAGE.GITHUB_CONFIG);
+      return ancien.token;
+    }
+    return null;
+  },
+  sauvegarderTokenGithub: (token) => localStorage.setItem(CLES_STOCKAGE.TOKEN_GITHUB, token),
 
   // Identifiant unique de CET appareil. Utilisé (1) comme métadonnée de
   // traçabilité sur chaque ticket ("quel appareil a vendu ceci"), et (2)

@@ -49,6 +49,10 @@ export function toutesLesVentes() {
   return Stockage.chargerVentes();
 }
 
+export function datesConnuesLocalement() {
+  return [...new Set(Stockage.chargerVentes().map(v => v.dateComptable))];
+}
+
 // Fusionne les ventes locales avec celles du dépôt privé pour une date
 // donnée (dédoublonnage par numéro de ticket), et met en cache le
 // résultat localement pour une consultation hors-ligne future. Revient

@@ -30,9 +30,14 @@ fonctionnement garanti même hors-ligne).
 
 ## Configurer la synchronisation vers le dépôt privé
 
-Voir `depot-prive-modele/README.md` pour la marche à suivre complète
-(création du dépôt privé, génération du jeton d'accès, configuration
-dans l'app via **Gestion des prix → ⚙️ Paramètres**).
+Le propriétaire et le nom du dépôt privé sont fixés une fois pour
+toutes dans `js/config.js` (`DEPOT_PRIVE`) — à adapter si tu changes de
+compte ou de nom de dépôt. **Seul le jeton d'accès reste propre à
+chaque appareil** (configuré dans l'app, **Gestion des prix → ⚙️
+Paramètres**) : c'est la seule information à ressaisir si tu vides un
+jour le cache de ce navigateur — rien n'est perdu, seule la connexion
+doit être rétablie. Voir `depot-prive-modele/README.md` pour la
+création du dépôt et la génération d'un jeton.
 
 ## Structure du code
 
@@ -114,9 +119,11 @@ jamais été connecté à GitHub).
   (`<identifiant>-SECOURS-000001`...), qui ne peut par construction
   jamais entrer en collision avec la séquence partagée, et qui laisse
   la main dès la reconnexion.
-- **Ventes/clôtures** : l'Historique et la Liste des clôtures consultent
-  le dépôt privé en plus des données locales, pour qu'une machine voie
-  l'activité de toutes les autres.
+- **Ventes/clôtures** : l'Historique (avec un accès "📅 Autres journées"
+  pour consulter n'importe quelle date passée, pas seulement
+  aujourd'hui) et la Liste des clôtures consultent le dépôt privé en
+  plus des données locales, pour qu'une machine voie l'activité de
+  toutes les autres — y compris après un vidage de son propre cache.
 
 ## Modifier la société ou le mot de passe de gestion
 

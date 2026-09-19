@@ -1,45 +1,82 @@
 /**
- * ui-historique.js — Écrans "Historique du jour" et "Clôture
- * journalière" (déclenchement, affichage, liste des clôtures passées).
+ * ui-historique.js — Écrans "Historique des ventes" et "Clôture
+ * journalière" (déclenchement, affichage, liste des journées passées).
  *
- * L'Historique et la Liste des clôtures consultent le dépôt privé en
- * plus des données locales, pour qu'une machine puisse voir l'activité
- * de toutes les autres (si la synchronisation GitHub est configurée).
+ * Toute consultation (ventes d'un jour, clôtures) va interroger le
+ * dépôt privé en plus des données locales, pour qu'une machine puisse
+ * voir l'activité de toutes les autres — y compris après un vidage du
+ * cache local, tant que le jeton GitHub de cet appareil est configuré
+ * (voir ui-parametres.js).
  */
-import { ventesDuJourFusionnees, dateComptable } from './ventes.js';
+import { ventesDuJourFusionnees, dateComptable, datesConnuesLocalement } from './ventes.js';
 import { formaterTicketTexte } from './ticket.js';
 import {
   cloturerEtSauvegarder, listerClotures, getCloture, mettreEnCacheCloture,
   supprimerCloture as supprimerClotureDonnees
 } from './cloture.js';
-import { obtenirClotureDistante, listerFichiersDistants } from './github-sync.js';
+import { getConfigGithub, obtenirClotureDistante, listerFichiersDistants } from './github-sync.js';
 import { modal, fermerModal, escapeHtml, enregistrerAction, attrArgs } from './ui-modal.js';
 import { telechargerFichier, ecrireFichierDossier } from './export.js';
 
 export function initUiHistorique() {
-  document.getElementById('btn-historique').addEventListener('click', afficherHistorique);
+  document.getElementById('btn-historique').addEventListener('click', () => afficherHistorique());
   document.getElementById('btn-cloture').addEventListener('click', declencherCloture);
   enregistrerAction('exporterCloture', exporterClotureTxt);
   enregistrerAction('voirCloture', voirCloture);
   enregistrerAction('supprimerCloture', demanderSuppressionCloture);
   enregistrerAction('confirmerSuppCloture', confirmerSuppressionCloture);
   enregistrerAction('ouvrirListeClotures', ouvrirListeClotures);
+  enregistrerAction('afficherHistorique', (date) => afficherHistorique(date));
+  enregistrerAction('ouvrirListeJoursVentes', ouvrirListeJoursVentes);
 }
 
 function afficherChargement(titre) {
   modal(`<h2>${escapeHtml(titre)}</h2><p class="confirm-txt">Récupération des données...</p>`);
 }
 
-export async function afficherHistorique() {
-  const date = dateComptable();
-  afficherChargement('Historique du jour');
+function messageNonConfigure() {
+  return `<p class="confirm-txt" style="font-size:12px;color:#FFB74D">
+    ⚠️ Jeton GitHub non configuré sur cet appareil : seules les ventes
+    faites ICI sont affichées (voir Gestion des prix → ⚙️ Paramètres).
+  </p>`;
+}
+
+export async function afficherHistorique(date = dateComptable()) {
+  afficherChargement('Historique — ' + date);
+  const configure = !!getConfigGithub();
   const ventes = await ventesDuJourFusionnees(date);
   const texte = ventes.length
     ? ventes.map(formaterTicketTexte).join('\n\n')
-    : "Aucune vente enregistrée aujourd'hui.";
-  modal(`<h2>Historique du jour (${ventes.length} ticket${ventes.length > 1 ? 's' : ''})</h2>
+    : "Aucune vente enregistrée pour cette journée.";
+  modal(`<h2>Historique du ${date} (${ventes.length} ticket${ventes.length > 1 ? 's' : ''})</h2>
+    ${configure ? '' : messageNonConfigure()}
     <div class="cloture-texte">${escapeHtml(texte)}</div>
-    <button class="btn-modal rouge full" data-action="fermerModal">FERMER</button>`);
+    <div class="modal-actions">
+      <button class="btn-modal gris" data-action="ouvrirListeJoursVentes">📅 Autres journées</button>
+      <button class="btn-modal vert" data-action="fermerModal">✅ Fermer</button>
+    </div>`);
+}
+
+export async function ouvrirListeJoursVentes() {
+  afficherChargement('Journées avec des ventes');
+  const locales = datesConnuesLocalement();
+  const distantes = await listerFichiersDistants('ventes');
+  const ensemble = new Set(locales);
+  (distantes || []).forEach(d => ensemble.add(d));
+  const dates = [...ensemble].sort().reverse();
+
+  let h = `<h2>Journées avec des ventes</h2><div class="gestion-scroll">`;
+  if (!dates.length) {
+    h += '<p class="confirm-txt">Aucune vente enregistrée.</p>';
+  } else {
+    dates.forEach(d => {
+      h += `<div class="fichier-ligne">
+        <button class="fichier-btn" data-action="afficherHistorique" data-args="${attrArgs([d])}">${d}</button>
+      </div>`;
+    });
+  }
+  h += `</div><button class="btn-modal rouge full" style="margin-top:10px" data-action="fermerModal">Fermer</button>`;
+  modal(h);
 }
 
 async function declencherCloture() {

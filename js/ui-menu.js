@@ -2,10 +2,20 @@
  * ui-menu.js — Navigation du menu de vente (catégories → articles →
  * viandes → options) et affichage du panier. Utilise l'API DOM
  * directement : cette partie ne nécessite pas de moteur de gabarits.
+ *
+ * Les articles marqués "promotion" dans le catalogue affichent un petit
+ * badge 🏷️ sur leur bouton — purement visuel, pour repérer en un coup
+ * d'œil ce qui est en promotion au moment de vendre.
+ *
+ * La catégorie "Divers" peut contenir un article spécial "Ristourne"
+ * (repéré par `special: 'ristourne'` dans le catalogue) : au lieu
+ * d'ajouter un prix fixe au panier, il ouvre une pop-up dédiée pour
+ * saisir un montant et un taux de TVA, et ajoute une ligne négative.
  */
 import { getCatalogue } from './catalogue.js';
 import { ajouterArticle, supprimerArticle, getPanier, getTotal, onChangement } from './panier.js';
 import { enregistrerAction, escapeHtml } from './ui-modal.js';
+import { ouvrirRistournePopup } from './ui-ristourne.js';
 
 const elMenu = () => document.getElementById('zone-menu');
 const elFooter = () => document.getElementById('zone-footer');
@@ -15,6 +25,10 @@ export function initUiMenu() {
   onChangement(rafraichirPanier);
   afficherCategories();
   rafraichirPanier({ total: getTotal(), panier: getPanier() });
+}
+
+function badge(obj) {
+  return obj.promo ? '🏷️ ' : '';
 }
 
 export function afficherCategories() {
@@ -43,10 +57,10 @@ function afficherArticles(categorie) {
   const catalogue = getCatalogue();
 
   if (categorie === 'Plats') {
-    Object.keys(catalogue.categories.Plats.types).forEach(nom => {
+    Object.entries(catalogue.categories.Plats.types).forEach(([nom, obj]) => {
       const btn = document.createElement('button');
       btn.className = 'btn-menu';
-      btn.textContent = nom;
+      btn.textContent = badge(obj) + nom;
       btn.addEventListener('click', () => afficherViandes(nom));
       menu.appendChild(btn);
     });
@@ -54,8 +68,13 @@ function afficherArticles(categorie) {
     Object.entries(catalogue.categories[categorie]).forEach(([nom, obj]) => {
       const btn = document.createElement('button');
       btn.className = 'btn-menu';
-      btn.innerHTML = `${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.85em">${obj.prix.toFixed(2)} €</span>`;
-      btn.addEventListener('click', () => ajouterArticle(nom, obj.prix, obj.tva));
+      if (obj.special === 'ristourne') {
+        btn.innerHTML = `${badge(obj)}${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.8em">Montant variable</span>`;
+        btn.addEventListener('click', () => ouvrirRistournePopup());
+      } else {
+        btn.innerHTML = `${badge(obj)}${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.85em">${obj.prix.toFixed(2)} €</span>`;
+        btn.addEventListener('click', () => ajouterArticle(nom, obj.prix, obj.tva));
+      }
       menu.appendChild(btn);
     });
   }
@@ -75,7 +94,7 @@ function afficherViandes(typePlat) {
   Object.entries(catalogue.categories.Plats.viandes).forEach(([nom, obj]) => {
     const btn = document.createElement('button');
     btn.className = 'btn-menu';
-    btn.innerHTML = `${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.85em">${(prixType + obj.prix).toFixed(2)} €</span>`;
+    btn.innerHTML = `${badge(obj)}${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.85em">${(prixType + obj.prix).toFixed(2)} €</span>`;
     btn.addEventListener('click', () => afficherOptions(typePlat, nom));
     menu.appendChild(btn);
   });
@@ -110,7 +129,7 @@ function afficherOptions(typePlat, viande) {
   Object.entries(catalogue.supplements).forEach(([nom, obj]) => {
     const btn = document.createElement('button');
     btn.className = 'btn-menu';
-    btn.innerHTML = `${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.85em">${obj.prix.toFixed(2)} €</span>`;
+    btn.innerHTML = `${badge(obj)}${escapeHtml(nom)}<br><span style="color:var(--accent);font-size:0.85em">${obj.prix.toFixed(2)} €</span>`;
     btn.addEventListener('click', () => {
       selection[nom] = !selection[nom];
       btn.style.outline = selection[nom] ? '3px solid var(--accent)' : '';

@@ -91,6 +91,12 @@ export function cyclerTva(cat, nom) {
   persisterEtSynchroniser({ op: 'tva', cat, nom, valeur });
 }
 
+export function basculerPromo(cat, nom) {
+  const obj = getArticleRef(cat, nom);
+  if (!obj) return;
+  persisterEtSynchroniser({ op: 'promo', cat, nom, valeur: !obj.promo });
+}
+
 export function renommerArticle(cat, nomActuel, nouveauNom) {
   if (!getArticleRef(cat, nomActuel) || nouveauNom === nomActuel) return;
   persisterEtSynchroniser({ op: 'renommer', cat, nomActuel, nouveauNom });
@@ -100,6 +106,6 @@ export function supprimerArticle(cat, nom) {
   persisterEtSynchroniser({ op: 'supprimer', cat, nom });
 }
 
-export function ajouterArticleCatalogue(cat, nom, prix, tva) {
-  persisterEtSynchroniser({ op: 'ajouter', cat, nom, prix, tva });
+export function ajouterArticleCatalogue(cat, nom, prix, tva, promo = false) {
+  persisterEtSynchroniser({ op: 'ajouter', cat, nom, prix, tva, promo });
 }

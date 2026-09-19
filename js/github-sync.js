@@ -19,7 +19,7 @@
  * clôtures, elles, sont fusionnées par numéro de ticket / par date.
  */
 import { Stockage } from './stockage.js';
-import { TAILLE_BLOC_TICKETS, DEPOT_PRIVE } from './config.js';
+import { DEPOT_PRIVE } from './config.js';
 import { appliquerPatchCatalogue, decrirePatch } from './catalogue-patch.js';
 
 const API_BASE = 'https://api.github.com';
@@ -190,15 +190,14 @@ async function synchroniserCatalogue(config, item) {
 
 // ===== Lecture à la demande (dépôt privé = source partagée) =====
 
-// Réserve atomiquement un bloc de numéros de tickets auprès du fichier
+// Réserve atomiquement LE PROCHAIN numéro de ticket auprès du fichier
 // partagé compteur.json (source de vérité unique de "quel est le
 // prochain numéro libre pour toute l'entreprise"). Utilise le même
 // mécanisme de nouvelle tentative en cas de conflit que le reste de ce
-// module : deux appareils réservant en même temps ne peuvent jamais
-// recevoir le même bloc. Renvoie null si non configuré, hors-ligne, ou
-// après échec de toutes les tentatives (l'appelant doit alors se
-// rabattre sur une numérotation de secours, voir numerotation.js).
-export async function reserverBlocTickets() {
+// module. Renvoie null si non configuré, hors-ligne, ou après échec de
+// toutes les tentatives (l'appelant se rabat alors sur une
+// numérotation de secours, voir numerotation.js).
+export async function reserverNumeroTicket() {
   const config = getConfigGithub();
   if (!estConfigure(config)) return null;
   const chemin = 'compteur.json';
@@ -213,12 +212,11 @@ export async function reserverBlocTickets() {
     if (distant.existe) {
       try { compteur = JSON.parse(distant.contenu); } catch { compteur = { prochain: 1 }; }
     }
-    const debut = compteur.prochain;
-    const fin = debut + TAILLE_BLOC_TICKETS - 1;
+    const numero = compteur.prochain;
     try {
-      await githubPutFile(config, chemin, JSON.stringify({ prochain: fin + 1 }, null, 2), distant.sha,
-        `Réservation bloc de tickets ${debut}-${fin}`);
-      return { debut, fin };
+      await githubPutFile(config, chemin, JSON.stringify({ prochain: numero + 1 }, null, 2), distant.sha,
+        `Réservation ticket n°${numero}`);
+      return numero;
     } catch (e) {
       if (e.status === 409 || e.status === 422) continue;
       return null;

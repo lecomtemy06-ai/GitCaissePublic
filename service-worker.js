@@ -29,6 +29,7 @@ const FICHIERS_A_METTRE_EN_CACHE = [
   './js/clavier.js',
   './js/ui-modal.js',
   './js/ui-menu.js',
+  './js/ui-ristourne.js',
   './js/ui-paiement.js',
   './js/ui-historique.js',
   './js/ui-export.js',

@@ -44,19 +44,9 @@ export const Stockage = {
   chargerClotures: () => lire(CLES_STOCKAGE.CLOTURES, {}),
   sauvegarderClotures: (c) => ecrire(CLES_STOCKAGE.CLOTURES, c),
 
-  // Bloc de numéros de tickets actuellement en cours de consommation
-  // par cet appareil : { debut, fin, prochain }. Voir numerotation.js.
-  chargerBlocTickets: () => lire(CLES_STOCKAGE.BLOC_TICKETS, null),
-  sauvegarderBlocTickets: (b) => ecrire(CLES_STOCKAGE.BLOC_TICKETS, b),
-
-  // Bloc suivant, réservé à l'avance en tâche de fond avant épuisement
-  // du bloc courant, prêt à prendre le relais sans appel réseau.
-  chargerBlocEnAttente: () => lire(CLES_STOCKAGE.BLOC_TICKETS_ATTENTE, null),
-  sauvegarderBlocEnAttente: (b) => ecrire(CLES_STOCKAGE.BLOC_TICKETS_ATTENTE, b),
-  effacerBlocEnAttente: () => localStorage.removeItem(CLES_STOCKAGE.BLOC_TICKETS_ATTENTE),
-
   // Filet de sécurité : compteur strictement local, utilisé uniquement
-  // si cet appareil épuise son bloc partagé alors qu'il est hors-ligne.
+  // si cet appareil ne parvient pas à réserver de numéro sur GitHub
+  // (hors-ligne, ou synchronisation pas configurée).
   chargerCompteurSecours: () => {
     const v = parseInt(localStorage.getItem(CLES_STOCKAGE.COMPTEUR_SECOURS), 10);
     return isNaN(v) ? 1 : v;

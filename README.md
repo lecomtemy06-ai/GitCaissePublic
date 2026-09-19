@@ -69,6 +69,7 @@ js/
   clavier.js                          Pavé numérique et clavier AZERTY réutilisables
   ui-modal.js                          Moteur générique de fenêtres modales
   ui-menu.js                            Navigation du menu de vente + panier
+  ui-ristourne.js                        Pop-up de saisie d'une ristourne
   ui-paiement.js                         Écran de paiement et reçu
   ui-historique.js                        Historique du jour et clôtures
   ui-export.js                             Écran Export & Sauvegarde
@@ -104,26 +105,38 @@ jamais été connecté à GitHub).
   correctif est appliqué à la version la PLUS RÉCENTE du fichier sur
   GitHub au moment de l'envoi — les modifications faites entre-temps par
   un autre appareil ne sont donc jamais écrasées.
-- **Numéro de ticket** : les appareils réservent ensemble, auprès du
-  dépôt privé, des **blocs de 100 numéros** (ex. 1-100, 101-200...) de
-  façon atomique — jamais deux appareils avec le même bloc. Chaque
-  appareil consomme ensuite localement les numéros de son bloc, sans
-  appel réseau à chaque vente : la numérotation reste quasi continue
-  pour toute l'entreprise (`000001`, `000002`...), avec parfois un saut
-  entre deux blocs selon quel appareil vend à quel moment, mais jamais
-  de doublon ni de vente bloquée par une coupure internet. Un nouveau
-  bloc est réservé en tâche de fond dès qu'un appareil entame les
-  derniers 20% du sien. Dans le cas rare où un appareil épuiserait
-  malgré tout son bloc alors qu'il est hors-ligne, il continue de
-  vendre avec une numérotation de secours qui lui est propre
-  (`<identifiant>-SECOURS-000001`...), qui ne peut par construction
-  jamais entrer en collision avec la séquence partagée, et qui laisse
-  la main dès la reconnexion.
+- **Numéro de ticket** : à chaque vente, l'appareil réserve auprès du
+  dépôt privé LE PROCHAIN NUMÉRO LIBRE (et un seul), de façon atomique —
+  une suite unique, partagée et ininterrompue pour toute l'entreprise
+  (priorité choisie pour la tenue comptable, quitte à ce que chaque
+  vente attende une confirmation réseau de l'ordre de quelques centaines
+  de millisecondes). Dans le cas rare où la réservation échouerait
+  (hors-ligne, synchronisation pas configurée), l'appareil bascule sur
+  une numérotation de secours qui lui est propre
+  (`<identifiant>-SECOURS-000001`...), jamais en collision avec la
+  séquence partagée puisque textuellement distincte.
 - **Ventes/clôtures** : l'Historique (avec un accès "📅 Autres journées"
   pour consulter n'importe quelle date passée, pas seulement
   aujourd'hui) et la Liste des clôtures consultent le dépôt privé en
   plus des données locales, pour qu'une machine voie l'activité de
   toutes les autres — y compris après un vidage de son propre cache.
+
+## Autres fonctionnalités
+
+- **Ajouter un article** (Gestion des prix) permet aussi d'ajouter dans
+  "Plats" (les formats), "Viandes" et "Suppléments" — pas seulement
+  dans les catégories à plat (Frites, Desserts, Boissons, Divers). Un
+  "plat" complet est toujours la combinaison, choisie au moment de la
+  vente, d'un format + d'une viande (+ suppléments) : ajouter un format
+  ou une viande suffit à le proposer partout.
+- **Promotion** : chaque article peut être marqué "en promotion" (case
+  à cocher à l'ajout, bouton 🏷️ à bascule sur un article existant dans
+  Gestion des prix). Purement visuel : un badge 🏷️ apparaît sur son
+  bouton de vente et dans la liste de gestion.
+- **Ristourne** (catégorie Divers) : ouvre une pop-up pour saisir un
+  montant et choisir le taux de TVA applicable, puis ajoute une ligne
+  négative au panier. Bloque la validation si la remise ferait passer
+  le panier sous 0 €.
 
 ## Modifier la société ou le mot de passe de gestion
 

@@ -316,6 +316,11 @@
       "Sauce+": {
         "prix": 0.8,
         "tva": 6
+      },
+      "Ristourne": {
+        "prix": 0,
+        "tva": 6,
+        "special": "ristourne"
       }
     }
   },

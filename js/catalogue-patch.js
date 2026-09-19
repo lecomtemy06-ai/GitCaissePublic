@@ -46,6 +46,9 @@ export function appliquerPatchCatalogue(catalogue, patch) {
     case 'tva':
       if (conteneur[patch.nom]) conteneur[patch.nom].tva = patch.valeur;
       break;
+    case 'promo':
+      if (conteneur[patch.nom]) conteneur[patch.nom].promo = !!patch.valeur;
+      break;
     case 'renommer':
       if (conteneur[patch.nomActuel] && patch.nouveauNom !== patch.nomActuel) {
         conteneur[patch.nouveauNom] = conteneur[patch.nomActuel];
@@ -56,7 +59,7 @@ export function appliquerPatchCatalogue(catalogue, patch) {
       delete conteneur[patch.nom];
       break;
     case 'ajouter':
-      conteneur[patch.nom] = { prix: patch.prix, tva: patch.tva };
+      conteneur[patch.nom] = { prix: patch.prix, tva: patch.tva, promo: !!patch.promo };
       break;
     default:
       console.warn('Patch catalogue inconnu :', patch);
@@ -68,6 +71,7 @@ export function decrirePatch(patch) {
   switch (patch.op) {
     case 'prix': return `Prix "${patch.nom}" -> ${patch.valeur.toFixed(2)} €`;
     case 'tva': return `TVA "${patch.nom}" -> ${patch.valeur}%`;
+    case 'promo': return `Promotion "${patch.nom}" -> ${patch.valeur ? 'activée' : 'désactivée'}`;
     case 'renommer': return `Renommage "${patch.nomActuel}" -> "${patch.nouveauNom}"`;
     case 'supprimer': return `Suppression "${patch.nom}"`;
     case 'ajouter': return `Ajout "${patch.nom}"`;

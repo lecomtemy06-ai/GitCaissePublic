@@ -56,8 +56,6 @@ export function exporterSauvegardeJSON() {
     ventes: toutesLesVentes(),
     clotures: listerClotures(),
     identifiantCaisse: Stockage.chargerIdentifiantCaisse(),
-    blocTickets: Stockage.chargerBlocTickets(),
-    blocTicketsEnAttente: Stockage.chargerBlocEnAttente(),
     compteurSecours: Stockage.chargerCompteurSecours()
   };
   telechargerFichier(`sauvegarde_caisse_${dateComptable()}.json`, JSON.stringify(data, null, 2), 'application/json');
@@ -68,8 +66,6 @@ export function restaurerSauvegarde(data) {
   if (data.ventes) Stockage.sauvegarderVentes(data.ventes);
   if (data.clotures) Stockage.sauvegarderClotures(data.clotures);
   if (data.identifiantCaisse) Stockage.definirIdentifiantCaisse(data.identifiantCaisse);
-  if (data.blocTickets) Stockage.sauvegarderBlocTickets(data.blocTickets);
-  if (data.blocTicketsEnAttente) Stockage.sauvegarderBlocEnAttente(data.blocTicketsEnAttente);
   if (data.compteurSecours) Stockage.sauvegarderCompteurSecours(data.compteurSecours);
 }
 

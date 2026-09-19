@@ -5,7 +5,7 @@
  */
 import { MDP_GESTION } from './config.js';
 import {
-  getCatalogue, modifierPrix, cyclerTva, renommerArticle,
+  getCatalogue, modifierPrix, cyclerTva, basculerPromo, renommerArticle,
   supprimerArticle, ajouterArticleCatalogue
 } from './catalogue.js';
 import { modal, fermerModal, escapeHtml, enregistrerAction, attrArgs } from './ui-modal.js';
@@ -19,6 +19,7 @@ export function initUiGestion() {
   enregistrerAction('popupAjoutArticle', popupAjoutArticle);
   enregistrerAction('ouvrirModifPrix', ouvrirModifPrix);
   enregistrerAction('cyclerTvaUi', cyclerTvaUi);
+  enregistrerAction('basculerPromoUi', basculerPromoUi);
   enregistrerAction('ouvrirRenommer', ouvrirRenommer);
   enregistrerAction('demanderSuppressionArticle', demanderSuppressionArticle);
   enregistrerAction('confirmerSuppressionArticle', confirmerSuppressionArticle);
@@ -95,10 +96,19 @@ function construireEcranGestion() {
 }
 
 function ligneArticle(cat, nom, obj) {
+  if (obj.special === 'ristourne') {
+    return `<div class="article-ligne">
+      <span class="article-nom">${obj.promo ? '🏷️ ' : ''}${escapeHtml(nom)}</span>
+      <span style="color:#888;font-size:11px;flex:1">Article spécial — montant et TVA saisis à chaque vente</span>
+      <button class="btn-edit" data-action="ouvrirRenommer" data-args="${attrArgs([cat, nom])}">✏️</button>
+      <button class="btn-del" data-action="demanderSuppressionArticle" data-args="${attrArgs([cat, nom])}">🗑</button>
+    </div>`;
+  }
   return `<div class="article-ligne">
-    <span class="article-nom">${escapeHtml(nom)}</span>
+    <span class="article-nom">${obj.promo ? '🏷️ ' : ''}${escapeHtml(nom)}</span>
     <button class="btn-prix" data-action="ouvrirModifPrix" data-args="${attrArgs([cat, nom])}">${obj.prix.toFixed(2)} €</button>
     <button class="btn-tva" data-action="cyclerTvaUi" data-args="${attrArgs([cat, nom])}" title="Toucher pour changer le taux">${obj.tva}%</button>
+    <button class="btn-tva" style="${obj.promo ? 'background:#F57F17;color:white;border-color:#F57F17' : ''}" data-action="basculerPromoUi" data-args="${attrArgs([cat, nom])}" title="Marquer/démarquer comme promotion">🏷️</button>
     <button class="btn-edit" data-action="ouvrirRenommer" data-args="${attrArgs([cat, nom])}">✏️</button>
     <button class="btn-del" data-action="demanderSuppressionArticle" data-args="${attrArgs([cat, nom])}">🗑</button>
   </div>`;
@@ -106,6 +116,11 @@ function ligneArticle(cat, nom, obj) {
 
 function cyclerTvaUi(cat, nom) {
   cyclerTva(cat, nom);
+  ouvrirGestionPrix();
+}
+
+function basculerPromoUi(cat, nom) {
+  basculerPromo(cat, nom);
   ouvrirGestionPrix();
 }
 
@@ -202,7 +217,21 @@ function confirmerSuppressionArticle(cat, nom) {
 
 function popupAjoutArticle() {
   const catalogue = getCatalogue();
-  const categories = Object.keys(catalogue.categories).filter(c => c !== 'Plats');
+  // Catégories "à plat" (Frites, Desserts, Boissons, Divers...) + les
+  // trois rubriques internes de "Plats", exposées séparément car elles
+  // ne se gèrent pas de la même façon au moment de la vente : "Plats"
+  // correspond aux formats (Spécial, Durum...), "Viandes" aux garnitures
+  // principales, "Suppléments" aux ajouts optionnels. Un "plat" complet
+  // tel que vu en caisse est toujours la combinaison, au moment de la
+  // vente, d'un format + d'une viande (+ suppléments) — il n'y a donc
+  // rien d'autre à ajouter "en plus" pour rendre un plat disponible :
+  // ajouter un format ou une viande suffit à le proposer partout.
+  const optionsCategories = [
+    ...Object.keys(catalogue.categories).filter(c => c !== 'Plats').map(c => ({ valeur: c, libelle: c })),
+    { valeur: 'Plats-types', libelle: 'Plats (formats)' },
+    { valeur: 'Plats-viandes', libelle: 'Viandes' },
+    { valeur: 'SUPPLEMENTS', libelle: 'Suppléments' }
+  ];
   let nomSaisi = '';
   let prixSaisi = '';
 
@@ -211,7 +240,7 @@ function popupAjoutArticle() {
     <div style="margin-bottom:8px">
       <label style="color:#aaa;font-size:13px">Catégorie</label>
       <select id="sel-cat" style="width:100%;padding:8px;background:#333;color:white;border:none;border-radius:6px;font-size:16px;margin-top:4px">
-        ${categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+        ${optionsCategories.map(o => `<option value="${escapeHtml(o.valeur)}">${escapeHtml(o.libelle)}</option>`).join('')}
       </select>
     </div>
     <div style="margin-bottom:6px">
@@ -228,6 +257,10 @@ function popupAjoutArticle() {
         <option value="6">6%</option><option value="12">12%</option><option value="21">21%</option>
       </select>
     </div>
+    <label style="display:flex;align-items:center;gap:8px;color:white;font-size:14px;margin-bottom:10px;cursor:pointer">
+      <input type="checkbox" id="chk-ajout-promo" style="width:20px;height:20px">
+      🏷️ Cet article est en promotion
+    </label>
     <div id="zone-saisie" style="display:flex;gap:8px"></div>
     <div class="modal-actions" style="margin-top:10px">
       <button class="btn-modal rouge" id="btn-retour-ajout">⬅ Retour</button>
@@ -262,8 +295,9 @@ function popupAjoutArticle() {
     const tva = parseInt(conteneur.querySelector('#sel-tva').value, 10);
     const nom = nomSaisi.trim();
     const prix = parseFloat(prixSaisi);
+    const promo = conteneur.querySelector('#chk-ajout-promo').checked;
     if (!cat || !nom || isNaN(prix)) return;
-    ajouterArticleCatalogue(cat, nom, prix, tva);
+    ajouterArticleCatalogue(cat, nom, prix, tva, promo);
     ouvrirGestionPrix();
   });
 

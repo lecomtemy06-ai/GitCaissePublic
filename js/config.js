@@ -19,8 +19,6 @@ export const MDP_GESTION = "1452";
 export const CLES_STOCKAGE = {
   CATALOGUE: "catalogue_v22",
   VENTES: "ventes_v22",
-  BLOC_TICKETS: "bloc_tickets_v22",
-  BLOC_TICKETS_ATTENTE: "bloc_tickets_attente_v22",
   COMPTEUR_SECOURS: "compteur_secours_v22",
   CLOTURES: "clotures_v22",
   FILE_SYNC: "file_sync_v22",
@@ -28,13 +26,6 @@ export const CLES_STOCKAGE = {
   TOKEN_GITHUB: "token_github_v22",
   IDENTIFIANT_CAISSE: "identifiant_caisse_v22"
 };
-
-// Nombre de numéros de ticket réservés en une fois par un appareil
-// auprès du dépôt privé. Volontairement large : à ce rythme, un
-// appareil ne devrait quasiment jamais épuiser son bloc alors qu'il
-// est hors-ligne (voir numerotation.js pour le filet de sécurité si
-// cela arrive tout de même).
-export const TAILLE_BLOC_TICKETS = 100;
 
 // Largeur (en caractères) des tickets et clôtures imprimés en texte
 export const LARGEUR_TICKET = 42;

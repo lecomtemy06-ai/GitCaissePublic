@@ -5,7 +5,7 @@
  * via localStorage — ce service worker ne fait que mettre en cache
  * les fichiers de l'application (HTML/CSS/JS/icônes).
  */
-const CACHE_NOM = 'caisse-friterie-v1';
+const CACHE_NOM = 'caisse-friterie-v2'; // ⚠️ à incrémenter (v3, v4...) à chaque mise à jour de fichiers mis en cache ci-dessous, sinon les appareils continueront de servir les anciennes versions indéfiniment
 
 const FICHIERS_A_METTRE_EN_CACHE = [
   './',

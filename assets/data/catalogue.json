@@ -1,0 +1,374 @@
+{
+  "categories": {
+    "Plats": {
+      "types": {
+        "Pain rond": {
+          "prix": 0,
+          "tva": 6,
+          "prixFixes": {
+            "Classique": {
+              "prix": 5,
+              "tva": 6
+            },
+            "Mulky": {
+              "prix": 5,
+              "tva": 6
+            },
+            "Pur bœuf": {
+              "prix": 6,
+              "tva": 6
+            },
+            "Kofte": {
+              "prix": 6,
+              "tva": 6
+            }
+          }
+        },
+        "Poche": {
+          "prix": 0,
+          "tva": 6,
+          "prixFixes": {
+            "Pitta poulet": {
+              "prix": 9,
+              "tva": 6
+            },
+            "Poulet mariné": {
+              "prix": 10,
+              "tva": 6
+            }
+          }
+        },
+        "Kapsalon": {
+          "prix": 0,
+          "tva": 6,
+          "prixFixes": {
+            "Pitta poulet": {
+              "prix": 10,
+              "tva": 6
+            },
+            "Poulet mariné": {
+              "prix": 12,
+              "tva": 6
+            }
+          }
+        },
+        "Durum": {
+          "prix": 0,
+          "tva": 6,
+          "prixFixes": {
+            "Pitta poulet": {
+              "prix": 8,
+              "tva": 6
+            },
+            "Poulet mariné": {
+              "prix": 9,
+              "tva": 6
+            },
+            "Pur bœuf": {
+              "prix": 9,
+              "tva": 6
+            },
+            "Kofte": {
+              "prix": 9,
+              "tva": 6
+            },
+            "Tenders": {
+              "prix": 9,
+              "tva": 6
+            }
+          }
+        },
+        "Mitraillette": {
+          "prix": 6,
+          "tva": 6
+        },
+        "Assiette": {
+          "prix": 10,
+          "tva": 6
+        },
+        "Viande": {
+          "prix": 0,
+          "tva": 6
+        }
+      },
+      "viandes": {
+        "Hamburger": {
+          "prix": 2.8,
+          "tva": 6
+        },
+        "Fricandelle": {
+          "prix": 2.8,
+          "tva": 6
+        },
+        "Fricandelle XXL": {
+          "prix": 4.5,
+          "tva": 6
+        },
+        "Mulky": {
+          "prix": 3.3,
+          "tva": 6
+        },
+        "Belcanto": {
+          "prix": 3.2,
+          "tva": 6
+        },
+        "Belcanto Crunchy": {
+          "prix": 3.9,
+          "tva": 6
+        },
+        "Viandelle": {
+          "prix": 3.9,
+          "tva": 6
+        },
+        "Grizzly": {
+          "prix": 4.5,
+          "tva": 6
+        },
+        "Pilon poulet": {
+          "prix": 6,
+          "tva": 6
+        },
+        "Brochette dinde": {
+          "prix": 4.2,
+          "tva": 6
+        },
+        "Cheese crack": {
+          "prix": 3.5,
+          "tva": 6
+        },
+        "Mini Lucifer": {
+          "prix": 3.9,
+          "tva": 6
+        },
+        "Nuggets": {
+          "prix": 4.5,
+          "tva": 6
+        },
+        "Tenders": {
+          "prix": 5,
+          "tva": 6
+        },
+        "Poulycroc": {
+          "prix": 3.2,
+          "tva": 6
+        },
+        "Croq. fromage": {
+          "prix": 3.2,
+          "tva": 6
+        },
+        "Pitta poulet": {
+          "prix": 5,
+          "tva": 6
+        },
+        "Poulet mariné": {
+          "prix": 7,
+          "tva": 6
+        },
+        "Chix fingers": {
+          "prix": 4.2,
+          "tva": 6
+        },
+        "Boulette": {
+          "prix": 3.5,
+          "tva": 6
+        },
+        "Brochette bœuf": {
+          "prix": 4.2,
+          "tva": 6
+        },
+        "Snacky balls": {
+          "prix": 4.2,
+          "tva": 6
+        },
+        "Kofte": {
+          "prix": 4.5,
+          "tva": 6
+        },
+        "Steak bœuf": {
+          "prix": 4.5,
+          "tva": 6
+        }
+      }
+    },
+    "Frites": {
+      "Petite": {
+        "prix": 3.5,
+        "tva": 6
+      },
+      "Grande": {
+        "prix": 4.5,
+        "tva": 6
+      }
+    },
+    "Desserts": {
+      "Chips Petit": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kinder bueno": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kinder country": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kinder Maxi": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Milka Leo": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Milka Tablette": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Mars": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Twix": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Snikers": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Mélange bonbon": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Pistache": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Cacahuete": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Noix": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Noix Cajoux": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Chewing gum": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Casis": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Chacha": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Balisto": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Bounty": {
+        "prix": 2,
+        "tva": 6
+      }
+    },
+    "Boissons": {
+      "Soft 20cl": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Soft 33cl": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Soft 50cl": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Soft 1,5l": {
+        "prix": 5,
+        "tva": 6
+      },
+      "Bière 33cl": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Bière 50cl": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Vin": {
+        "prix": 2,
+        "tva": 21
+      },
+      "Eau": {
+        "prix": 2,
+        "tva": 6
+      },
+      "Kizilay": {
+        "prix": 2,
+        "tva": 6
+      }
+    },
+    "Divers": {
+      "Supplément": {
+        "prix": 0.6,
+        "tva": 6
+      },
+      "Sauces": {
+        "prix": 0.9,
+        "tva": 6
+      },
+      "Ristourne": {
+        "prix": 0,
+        "tva": 6,
+        "special": "ristourne"
+      }
+    }
+  },
+  "supplements": {
+    "Salade": {
+      "prix": 0,
+      "tva": 6
+    },
+    "Tomates": {
+      "prix": 0,
+      "tva": 6
+    },
+    "Oignons": {
+      "prix": 0,
+      "tva": 6
+    },
+    "Fromagère": {
+      "prix": 1.5,
+      "tva": 6
+    },
+    "Crudités+": {
+      "prix": 0.8,
+      "tva": 6
+    },
+    "Frites+": {
+      "prix": 0.8,
+      "tva": 6
+    },
+    "Sauce+": {
+      "prix": 0.8,
+      "tva": 6
+    },
+    "Frites + Sauces": {
+      "prix": 2.5,
+      "tva": 6,
+      "formats": [
+        "Pain rond",
+        "Poche",
+        "Durum"
+      ]
+    }
+  }
+}
